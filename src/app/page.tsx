@@ -1,11 +1,16 @@
-import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
-import Image from "next/image";
+import Body from "@/components/Body";
+import { DesktopProvider } from "../utils/DesktopContext";
 
 export default function Home() {
   return (
-    <div className="m-2 p-2 border-2 rounded-lg">
-      <Navbar />
-    </div>
+    <DesktopProvider>
+      <div className="h-screen overflow-hidden flex flex-col">
+        <div className="flex-1 m-4 p-4 border-[3px] border-black rounded-sm shadow-[6px_6px_0_#000] flex flex-col">
+          <Navbar />
+          <Body />
+        </div>
+      </div>
+    </DesktopProvider>
   );
 }
