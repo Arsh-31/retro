@@ -246,6 +246,108 @@ const NotepadWindow = ({ id, name }: { id: string; name: string }) => {
   );
 };
 
+const MusicPlayerWindow = ({ id, name }: { id: string; name: string }) => {
+  const { items, closeWindow, renameItem, deleteItem } = useDesktop();
+  const file = items.find(i => i.id === id);
+  const [renaming, setRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState(file?.name || "");
+
+  // Extract YouTube and Spotify links from content
+  const content = file?.content || "";
+  const youtubeMatch = content.match(/https?:\/\/(www\.)?youtube\.com\/watch\?v=[^\s\\n]+/);
+  const spotifyMatch = content.match(/https?:\/\/(open\.)?spotify\.com\/track\/[^\s\\n]+/);
+  const youtubeUrl = youtubeMatch ? youtubeMatch[0] : null;
+  const spotifyUrl = spotifyMatch ? spotifyMatch[0] : null;
+
+  // Convert YouTube link to embed
+  let youtubeEmbed = null;
+  if (youtubeUrl) {
+    const videoId = youtubeUrl.split("v=")[1];
+    youtubeEmbed = `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  const handleRename = () => {
+    setRenaming(true);
+    setRenameValue(file?.name || "");
+  };
+  const handleRenameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRenameValue(e.target.value);
+  };
+  const handleRenameBlur = () => {
+    if (renameValue.trim()) {
+      renameItem(id, renameValue.trim());
+    }
+    setRenaming(false);
+  };
+  const handleRenameKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      (e.target as HTMLInputElement).blur();
+    } else if (e.key === "Escape") {
+      setRenaming(false);
+    }
+  };
+  const handleDelete = () => {
+    deleteItem(id);
+    closeWindow(id);
+  };
+
+  return (
+    <div className="fixed top-40 left-40 w-96 h-80 bg-[#F0F0F0] border-[3px] border-black rounded-sm shadow-[4px_4px_0_0_#000] z-50 flex flex-col font-mono">
+      <div className="flex items-center justify-between bg-[#000080] text-white px-2 py-1 border-b border-black">
+        <span className="font-bold text-sm flex items-center gap-1">
+          {renaming ? (
+            <input
+              className="text-xs text-center break-all border border-gray-400 bg-white px-1 py-0.5 w-32 outline-none"
+              value={renameValue}
+              autoFocus
+              onChange={handleRenameChange}
+              onBlur={handleRenameBlur}
+              onKeyDown={handleRenameKey}
+              maxLength={32}
+            />
+          ) : (
+            <>
+              <span role="img" aria-label="music">🎵</span> {file?.name}
+              <span className="ml-1 cursor-pointer" title="Rename" onClick={handleRename}>✏️</span>
+              <span className="ml-1 cursor-pointer" title="Delete" onClick={handleDelete}>🗑️</span>
+            </>
+          )}
+        </span>
+        <button className="text-xs px-2 py-0.5 bg-red-400 hover:bg-red-600 text-white rounded" onClick={() => closeWindow(id)}>
+          X
+        </button>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 p-4">
+        {youtubeEmbed && (
+          <iframe
+            width="280"
+            height="158"
+            src={youtubeEmbed}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded border border-black shadow"
+          />
+        )}
+        {spotifyUrl && (
+          <a
+            href={spotifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1 bg-green-600 text-white rounded font-bold text-xs border border-black shadow hover:bg-green-700"
+          >
+            ▶️ Play on Spotify
+          </a>
+        )}
+        {!youtubeEmbed && !spotifyUrl && (
+          <div className="text-center text-gray-700">No playable link found.<br />{content}</div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const DesktopArea = () => {
   const { addFolder, addTextFile, openWindows, items } = useDesktop();
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
@@ -302,7 +404,14 @@ const DesktopArea = () => {
       {/* Render open folder and notepad windows */}
       {openWindows.map((win: OpenWindow) => {
         const item = items.find(i => i.id === win.id);
-        if (item?.type === "folder") {
+        // Use regex to detect YouTube or Spotify links in the content, ignoring case and newlines
+        const isSong = item?.type === "text" &&
+          (item.content &&
+            (/https?:\/\/(www\.)?youtube\.com\/watch\?v=[^\s]+/i.test(item.content) ||
+             /https?:\/\/(open\.)?spotify\.com\/track\/[^\s]+/i.test(item.content)));
+        if (isSong) {
+          return <MusicPlayerWindow key={win.id} id={win.id} name={win.name} />;
+        } else if (item?.type === "folder") {
           return <FolderWindow key={win.id} id={win.id} name={win.name} />;
         } else if (item?.type === "text") {
           return <NotepadWindow key={win.id} id={win.id} name={win.name} />;
