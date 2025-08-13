@@ -41,35 +41,40 @@ export const DesktopProvider = ({ children }: { children: ReactNode }) => {
           id: "song-1",
           type: "text",
           name: "Blue - Yung Kai.txt",
-          content: "Artist: Yung Kai\nListen: https://www.youtube.com/watch?v=IpFX2vq8HKw\nSpotify: https://open.spotify.com/track/blue-yung-kai",
+          content:
+            "Artist: Yung Kai\nListen: https://www.youtube.com/watch?v=IpFX2vq8HKw\nSpotify: https://open.spotify.com/track/blue-yung-kai",
           parentId: "songs-folder",
         },
         {
           id: "song-2",
           type: "text",
           name: "Undressed - Sombr.txt",
-          content: "Artist: Sombr\nListen: https://www.youtube.com/watch?v=z0wT6CrEGYg\nSpotify: https://open.spotify.com/track/undressed-sombr",
+          content:
+            "Artist: Sombr\nListen: https://www.youtube.com/watch?v=z0wT6CrEGYg\nSpotify: https://open.spotify.com/track/undressed-sombr",
           parentId: "songs-folder",
         },
         {
           id: "song-3",
           type: "text",
           name: "What Was I Made For - Billie Eilish.txt",
-          content: "Artist: Billie Eilish\nListen: https://www.youtube.com/watch?v=cW8VLC9nnTo\nSpotify: https://open.spotify.com/track/3qhlB30KknSejmIvZZLjOD",
+          content:
+            "Artist: Billie Eilish\nListen: https://www.youtube.com/watch?v=cW8VLC9nnTo\nSpotify: https://open.spotify.com/track/3qhlB30KknSejmIvZZLjOD",
           parentId: "songs-folder",
         },
         {
           id: "song-4",
           type: "text",
           name: "Seven - Jung Kook ft. Latto.txt",
-          content: "Artist: Jung Kook ft. Latto\nListen: https://www.youtube.com/watch?v=QU9c0053UAU\nSpotify: https://open.spotify.com/track/5OD9i7x4xviqjykh9A2nqH",
+          content:
+            "Artist: Jung Kook ft. Latto\nListen: https://www.youtube.com/watch?v=QU9c0053UAU\nSpotify: https://open.spotify.com/track/5OD9i7x4xviqjykh9A2nqH",
           parentId: "songs-folder",
         },
         {
           id: "song-5",
           type: "text",
           name: "Agora Hills - Doja Cat.txt",
-          content: "Artist: Doja Cat\nListen: https://www.youtube.com/watch?v=3k79ozsd_-8\nSpotify: https://open.spotify.com/track/3qQbCzHBycnDpGskqOWY0E",
+          content:
+            "Artist: Doja Cat\nListen: https://www.youtube.com/watch?v=3k79ozsd_-8\nSpotify: https://open.spotify.com/track/3qQbCzHBycnDpGskqOWY0E",
           parentId: "songs-folder",
         },
       ],
@@ -110,47 +115,74 @@ export const DesktopProvider = ({ children }: { children: ReactNode }) => {
   const addFolder = (parentId: string | null = null) => {
     const name = `New Folder ${getNextIndex(items, parentId, "folder")}`;
     const id = `${Date.now()}-folder`;
-    const newFolder: DesktopItem = { id, type: "folder", name, children: [], parentId };
-    setItems(items => addItemToTree(items, newFolder, parentId));
+    const newFolder: DesktopItem = {
+      id,
+      type: "folder",
+      name,
+      children: [],
+      parentId,
+    };
+    setItems((items) => addItemToTree(items, newFolder, parentId));
   };
 
   const addTextFile = (parentId: string | null = null) => {
     const name = `New Text File ${getNextIndex(items, parentId, "text")}.txt`;
     const id = `${Date.now()}-text`;
-    const newFile: DesktopItem = { id, type: "text", name, content: "", parentId };
-    setItems(items => addItemToTree(items, newFile, parentId));
+    const newFile: DesktopItem = {
+      id,
+      type: "text",
+      name,
+      content: "",
+      parentId,
+    };
+    setItems((items) => addItemToTree(items, newFile, parentId));
   };
 
   const openFolder = (id: string, name: string) => {
-    if (!openWindows.find(w => w.id === id)) {
+    if (!openWindows.find((w) => w.id === id)) {
       setOpenWindows([...openWindows, { id, name }]);
     }
   };
 
   const closeWindow = (id: string) => {
-    setOpenWindows(openWindows.filter(w => w.id !== id));
+    setOpenWindows(openWindows.filter((w) => w.id !== id));
   };
 
   const openTextFile = (id: string, name: string) => {
-    if (!openWindows.find(w => w.id === id)) {
+    if (!openWindows.find((w) => w.id === id)) {
       setOpenWindows([...openWindows, { id, name }]);
     }
   };
 
   const saveTextFile = (id: string, content: string) => {
-    setItems(items => items.map(item => item.id === id ? { ...item, content } : item));
+    setItems((items) =>
+      items.map((item) => (item.id === id ? { ...item, content } : item))
+    );
   };
 
   const renameItem = (id: string, newName: string) => {
-    setItems(items => renameItemInTree(items, id, newName));
+    setItems((items) => renameItemInTree(items, id, newName));
   };
 
   const deleteItem = (id: string) => {
-    setItems(items => deleteItemFromTree(items, id));
+    setItems((items) => deleteItemFromTree(items, id));
   };
 
   return (
-    <DesktopContext.Provider value={{ items, openWindows, addFolder, addTextFile, openFolder, closeWindow, openTextFile, saveTextFile, renameItem, deleteItem }}>
+    <DesktopContext.Provider
+      value={{
+        items,
+        openWindows,
+        addFolder,
+        addTextFile,
+        openFolder,
+        closeWindow,
+        openTextFile,
+        saveTextFile,
+        renameItem,
+        deleteItem,
+      }}
+    >
       {children}
     </DesktopContext.Provider>
   );
@@ -163,24 +195,43 @@ export const useDesktop = () => {
 };
 
 // Helper to add item to tree
-function addItemToTree(tree: DesktopItem[], item: DesktopItem, parentId: string | null): DesktopItem[] {
+function addItemToTree(
+  tree: DesktopItem[],
+  item: DesktopItem,
+  parentId: string | null
+): DesktopItem[] {
   if (!parentId) return [...tree, item];
-  return tree.map(node => {
+  return tree.map((node) => {
     if (node.id === parentId && node.type === "folder") {
-      return { ...node, children: node.children ? [...node.children, item] : [item] };
+      return {
+        ...node,
+        children: node.children ? [...node.children, item] : [item],
+      };
     } else if (node.type === "folder" && node.children) {
-      return { ...node, children: addItemToTree(node.children, item, parentId) };
+      return {
+        ...node,
+        children: addItemToTree(node.children, item, parentId),
+      };
     }
     return node;
   });
 }
 // Helper to get next index for naming
-function getNextIndex(tree: DesktopItem[], parentId: string | null, type: "folder" | "text"): number {
-  let arr: DesktopItem[] = parentId ? findNodeById(tree, parentId)?.children || [] : tree;
-  return (arr.filter(i => i.type === type).length + 1);
+function getNextIndex(
+  tree: DesktopItem[],
+  parentId: string | null,
+  type: "folder" | "text"
+): number {
+  let arr: DesktopItem[] = parentId
+    ? findNodeById(tree, parentId)?.children || []
+    : tree;
+  return arr.filter((i) => i.type === type).length + 1;
 }
 
-export function findNodeById(tree: DesktopItem[], id: string): DesktopItem | undefined {
+export function findNodeById(
+  tree: DesktopItem[],
+  id: string
+): DesktopItem | undefined {
   for (const node of tree) {
     if (node.id === id) return node;
     if (node.type === "folder" && node.children) {
@@ -192,12 +243,19 @@ export function findNodeById(tree: DesktopItem[], id: string): DesktopItem | und
 }
 
 // Helper to rename item in tree
-function renameItemInTree(tree: DesktopItem[], id: string, newName: string): DesktopItem[] {
-  return tree.map(node => {
+function renameItemInTree(
+  tree: DesktopItem[],
+  id: string,
+  newName: string
+): DesktopItem[] {
+  return tree.map((node) => {
     if (node.id === id) {
       return { ...node, name: newName };
     } else if (node.type === "folder" && node.children) {
-      return { ...node, children: renameItemInTree(node.children, id, newName) };
+      return {
+        ...node,
+        children: renameItemInTree(node.children, id, newName),
+      };
     }
     return node;
   });
@@ -205,10 +263,12 @@ function renameItemInTree(tree: DesktopItem[], id: string, newName: string): Des
 
 // Helper to delete item from tree
 function deleteItemFromTree(tree: DesktopItem[], id: string): DesktopItem[] {
-  return tree.filter(node => node.id !== id).map(node => {
-    if (node.type === "folder" && node.children) {
-      return { ...node, children: deleteItemFromTree(node.children, id) };
-    }
-    return node;
-  });
-} 
+  return tree
+    .filter((node) => node.id !== id)
+    .map((node) => {
+      if (node.type === "folder" && node.children) {
+        return { ...node, children: deleteItemFromTree(node.children, id) };
+      }
+      return node;
+    });
+}
