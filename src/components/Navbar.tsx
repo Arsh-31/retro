@@ -35,7 +35,7 @@ function Navbar() {
       <div className="text-black px-2 py-1">
         <Time />
         <div>another one</div>
-        <p>This doesn't work</p>
+        <p>This doesn't work, whyyyy</p>
       </div>
     </div>
   );
