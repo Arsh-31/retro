@@ -189,7 +189,7 @@ export default function Planets() {
   };
 
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
+    <div className="relative w-full h-screen overflow-hidden">
       {Object.keys(planets).map((planet) => {
         const p = planets[planet as PlanetKey];
         return (
@@ -209,39 +209,51 @@ export default function Planets() {
 
       {activePlanet && (
         <div
-          className="absolute bg-black text-green-400 border-4 border-green-500 rounded-lg p-3 font-['Press_Start_2P'] text-xs shadow-lg w-64 z-50"
+          className="absolute bg-gradient-to-br from-[#0a0f2c] via-[#101840] to-[#1a2453] 
+             text-blue-200 border-2 border-blue-500/70 rounded-lg p-3 
+             font-['Press_Start_2P'] text-xs shadow-2xl shadow-blue-900/50 w-64 z-50"
           style={{ top: cardPosition.y, left: cardPosition.x }}
         >
-          <h2 className="text-lg mb-2">{planets[activePlanet].name}</h2>
+          <h2 className="text-lg mb-2 text-blue-300 tracking-wide">
+            {planets[activePlanet].name}
+          </h2>
+
           <ul className="leading-snug space-y-1">
             <li>
-              <strong>Diameter:</strong> {planets[activePlanet].diameter}
+              <strong className="text-blue-400">Diameter:</strong>{" "}
+              {planets[activePlanet].diameter}
             </li>
             <li>
-              <strong>Mass:</strong> {planets[activePlanet].mass}
+              <strong className="text-blue-400">Mass:</strong>{" "}
+              {planets[activePlanet].mass}
             </li>
             <li>
-              <strong>Gravity:</strong> {planets[activePlanet].gravity}
+              <strong className="text-blue-400">Gravity:</strong>{" "}
+              {planets[activePlanet].gravity}
             </li>
             <li>
-              <strong>Moons:</strong> {planets[activePlanet].moons}
+              <strong className="text-blue-400">Moons:</strong>{" "}
+              {planets[activePlanet].moons}
             </li>
             <li>
-              <strong>Atmosphere:</strong> {planets[activePlanet].atmosphere}
+              <strong className="text-blue-400">Atmosphere:</strong>{" "}
+              {planets[activePlanet].atmosphere}
             </li>
             <li>
-              <strong>Orbital Period:</strong>{" "}
+              <strong className="text-blue-400">Orbital Period:</strong>{" "}
               {planets[activePlanet].orbitalPeriod}
             </li>
           </ul>
-          <p className="italic mt-2">
-            Fun Fact: {planets[activePlanet].funFact}
+
+          <p className="italic mt-2 text-blue-300">
+            ✦ Fun Fact: {planets[activePlanet].funFact}
           </p>
+
           <button
             onClick={() => setActivePlanet(null)}
-            className="mt-3 w-full py-2 bg-green-600 text-black border-2 border-green-300 rounded hover:bg-green-500"
+            className="mt-3 w-full py-2 bg-blue-700 text-blue-100 border-2 border-blue-400 rounded hover:bg-blue-600 hover:border-blue-300 transition"
           >
-            CLOSE
+            CLOSE ✦
           </button>
         </div>
       )}
