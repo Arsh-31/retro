@@ -253,7 +253,7 @@ export default function Planets() {
             onClick={() => setActivePlanet(null)}
             className="mt-3 w-full py-2 bg-blue-700 text-blue-100 border-2 border-blue-400 rounded hover:bg-blue-600 hover:border-blue-300 transition"
           >
-            CLOSE ✦
+            CLOSE
           </button>
         </div>
       )}
